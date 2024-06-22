@@ -1,6 +1,9 @@
 // app/page.tsx
 import Head from 'next/head';
-import FileList from '../components/FileList';
+import dynamic from 'next/dynamic';
+
+// Import FileList component dynamically
+const FileList = dynamic(() => import('../components/FileList'), { ssr: false });
 
 const Home: React.FC = () => {
   return (
