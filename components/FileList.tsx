@@ -1,20 +1,34 @@
+'use client'
 // components/FileList.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaFolder, FaFileAlt } from 'react-icons/fa';
+import { invoke } from '@tauri-apps/api';
 
 type FileItem = {
   name: string;
-  type: 'folder' | 'file';
+  type: 'folder' | 'file' | string;
 };
 
-const filesAndFolders: FileItem[] = [
-  { name: 'Documents', type: 'folder' },
-  { name: 'Pictures', type: 'folder' },
-  { name: 'notes.txt', type: 'file' },
-  { name: 'resume.pdf', type: 'file' },
-];
-
 const FileList: React.FC = () => {
+  const [filesAndFolders, setFilesAndFolders] = useState<FileItem[]>([]);
+
+  useEffect(() => {
+    const fetchFilesAndFolders = async () => {
+      try {
+        const items: string[] = await invoke('list_files_and_folders', { path: '/' });
+        const formattedItems = items.map((name) => ({
+          name,
+          type: name.includes('.') ? 'file' : 'folder',
+        }));
+        setFilesAndFolders(formattedItems);
+      } catch (error) {
+        console.error('Error fetching files and folders:', error);
+      }
+    };
+
+    fetchFilesAndFolders();
+  }, []);
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Files and Folders</h1>
