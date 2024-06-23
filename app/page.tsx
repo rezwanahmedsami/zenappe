@@ -1,24 +1,13 @@
-// app/page.tsx
-import Head from 'next/head';
-import dynamic from 'next/dynamic';
+import TabList from "@/components/TabList";
+import FileBox from "@/components/FileBox";
 
-// Import FileList component dynamically
-const FileList = dynamic(() => import('../components/FileList'), { ssr: false });
-
-const Home: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
-      <Head>
-        <title>Zenappe</title>
-        <meta name="description" content="Zenappe - FTP and File Manager" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="bg-gray-800 shadow-md rounded-lg p-6 w-full max-w-md">
-        <FileList />
-      </main>
-    </div>
-  );
-};
-
-export default Home;
+export default function Home() {
+    return (
+        <div className="flex flex-col h-screen">
+            <TabList />
+            <div className="grid grid-cols-2 gap-4 bg-neutral-100 h-full min-h-0">
+                <FileBox />
+            </div>
+        </div>
+    );
+}
