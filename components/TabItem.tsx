@@ -11,7 +11,7 @@ export default function TabItem({ text, link, active = false }: TabItemProps) {
         <Link
             href={link}
             className={`h-9 flex items-center pl-3 pr-6 space-x-2 relative ${
-                active ? "bg-white" : ""
+                active ? "bg-white" : "bg-neutral-100 hover:bg-neutral-200"
             }`}
         >
             <svg

@@ -9,7 +9,7 @@ export default function TabList() {
             <TabItem link="/" text="rezwan@tutopa.com@ftp.tutopa.com" />
             <button
                 type="button"
-                className="h-9 px-3 bg-blue-500 text-white text-xs font-medium whitespace-nowrap"
+                className="h-9 px-3 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium whitespace-nowrap"
             >
                 New Site
             </button>
