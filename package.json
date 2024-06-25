@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.26.17",
     "@tauri-apps/api": "^1.5.6",
     "next": "14.2.4",
     "react": "^18",
