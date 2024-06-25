@@ -242,6 +242,7 @@ export const MenuComponent = React.forwardRef<
         );
     }
 );
+MenuComponent.displayName = "MenuComponent";
 
 type MenuItemProps = {
     label: string;
@@ -282,6 +283,7 @@ export const MenuItem = React.forwardRef<
         </button>
     );
 });
+MenuItem.displayName = "MenuItem";
 
 export const Menu = React.forwardRef<
     HTMLButtonElement,
@@ -299,3 +301,4 @@ export const Menu = React.forwardRef<
 
     return <MenuComponent {...props} ref={ref} />;
 });
+Menu.displayName = "Menu";

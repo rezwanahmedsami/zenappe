@@ -2,7 +2,7 @@ import TabItem from "./TabItem";
 
 export default function TabList() {
     return (
-        <div className="overflow-x-auto bg-neutral-100 flex divide-x divide-neutral-200 border-b border-b-neutral-200">
+        <div className="overflow-x-auto bg-neutral-100 flex divide-x divide-neutral-200 border-b border-b-neutral-200 flex-shrink-0">
             <TabItem link="/" text="Documents - Documents" active={true} />
             <TabItem link="/" text="rezwan@tutopa.com@ftp.tutopa.com" />
             <TabItem link="/" text="rezwan@tutopa.com@ftp.tutopa.com" />

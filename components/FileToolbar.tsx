@@ -2,9 +2,13 @@
 
 import { Menu, MenuItem } from "./ui/Dropdown";
 
-export default function FileToolbar() {
+type FileToolbarProps = {
+    refresh: () => void;
+};
+
+export default function FileToolbar({ refresh }: FileToolbarProps) {
     return (
-        <div className="px-2 py-1 bg-white flex items-center justify-between overflow-x-auto">
+        <div className="px-2 py-1 bg-white flex items-center justify-between overflow-x-auto flex-shrink-0">
             <div className="flex items-center space-x-2">
                 <Menu
                     label={
@@ -118,6 +122,7 @@ export default function FileToolbar() {
             <button
                 type="button"
                 className="h-8 px-3 flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-medium text-xs rounded ml-2"
+                onClick={refresh}
             >
                 <svg
                     width="15"

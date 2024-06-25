@@ -23,7 +23,9 @@ export default function RootLayout({
             <Head>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <body className={roboto.className}>{children}</body>
+            <body className={`${roboto.className} select-none`}>
+                {children}
+            </body>
         </html>
     );
 }
