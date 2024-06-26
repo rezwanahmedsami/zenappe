@@ -54,7 +54,7 @@ export default function FileBox() {
     }
 
     return (
-        <div className="flex flex-col min-h-0">
+        <div className="flex flex-col h-full">
             <FileToolbar refresh={getFilesAndFolders} />
             <FilePath path={path.length > 0 ? "/" + path.join("/") : "/"} />
             <FileTable files={filesAndFolders} path={path} setPath={setPath} />
