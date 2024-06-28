@@ -6,7 +6,7 @@ type FileTableItemProps = FileType & {
 
 export default function FileTableItem({
     type = "file",
-    label,
+    name,
     size,
     changed,
     rights,
@@ -68,7 +68,7 @@ export default function FileTableItem({
                         </svg>
                     )}
                     <span className="text-xs font-medium min-w-0 truncate w-full">
-                        {label}
+                        {name}
                     </span>
                 </div>
             </td>

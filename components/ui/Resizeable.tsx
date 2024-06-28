@@ -120,7 +120,7 @@ export function ResizeableHandle({ className }: ResizeableHandleProps) {
     return (
         <div
             ref={handleRef}
-            className={`w-px cursor-col-resize ${className ?? ""}`}
+            className={`w-px p-1 cursor-col-resize ${className ?? ""}`}
         ></div>
     );
 }

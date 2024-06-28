@@ -41,11 +41,11 @@ export default function FileTable({ files, path, setPath }: FileTableProps) {
                     {path.length > 0 && (
                         <FileTableItem
                             type="folder"
-                            label="..."
+                            name="..."
                             size=""
                             changed=""
-                            rights=""
-                            owner=""
+                            rights={0}
+                            owner={false}
                             onDoubleClick={handleFolderBack}
                         />
                     )}
@@ -53,14 +53,14 @@ export default function FileTable({ files, path, setPath }: FileTableProps) {
                         <FileTableItem
                             key={index}
                             type={file.type}
-                            label={file.label}
+                            name={file.name}
                             size={file.size}
                             changed={file.changed}
                             rights={file.rights}
                             owner={file.owner}
                             onDoubleClick={() =>
                                 file.type === "folder" &&
-                                handleFolderClick(file.label)
+                                handleFolderClick(file.name)
                             }
                         />
                     ))}
