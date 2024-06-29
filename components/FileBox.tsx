@@ -44,7 +44,7 @@ export default function FileBox() {
         }
     }
 
-    function getFilesAndFolders(path: string) {
+    function getFilesAndFolders(path: string = "/") {
         import("@tauri-apps/api")
             .then(({ invoke }) => {
                 invoke<string[]>("list_files_and_folders", {path: path})

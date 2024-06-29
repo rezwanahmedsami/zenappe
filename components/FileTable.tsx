@@ -15,6 +15,20 @@ export default function FileTable({ files, path, setPath }: FileTableProps) {
         setPath((prev) => prev.slice(0, -1));
     }
 
+    function open_file(filePath: string) {
+        const pathfilePath = path.length > 0 ? "/" + path.join("/") + "/" + filePath : "/" + filePath;
+        console.log(pathfilePath);
+        import("@tauri-apps/api")
+            .then(async ({ invoke })  => {
+                console.log("open_file", pathfilePath);
+                let res = await invoke("open_file", { filePath: pathfilePath, software: "code" });
+                console.log(res);
+            })
+            .catch((error) => {
+                console.error("Error loading @tauri-apps/api:", error);
+            });
+    }
+
     return (
         <div className="overflow-x-auto overflow-y-auto max-h-full min-h-0">
             <table className="w-full h-full">
@@ -59,8 +73,7 @@ export default function FileTable({ files, path, setPath }: FileTableProps) {
                             rights={file.rights}
                             owner={file.owner}
                             onDoubleClick={() =>
-                                file.type === "folder" &&
-                                handleFolderClick(file.name)
+                                file.type === "folder" ? handleFolderClick(file.name) : open_file(file.name)
                             }
                         />
                     ))}

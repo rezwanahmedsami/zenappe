@@ -59,7 +59,9 @@
         "height": 600,
         "resizable": true,
         "title": "zenappe",
-        "width": 800
+        "width": 800,
+        "minHeight": 600,
+        "minWidth": 800
       }
     ]
   }
