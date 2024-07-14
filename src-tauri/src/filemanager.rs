@@ -1,5 +1,5 @@
-pub mod FileManager{
-    use std::ffi::OsString;
+pub mod file_manager{
+    // use std::ffi::OsString;
     use std::fs;
     use std::os::unix::fs::PermissionsExt;
     use std::time::SystemTime;
@@ -56,6 +56,7 @@ pub mod FileManager{
             };
             items.push(file);
         }
+        // file_handler::simple_watch_test();
 
         Ok(items)
     }
@@ -74,12 +75,12 @@ pub mod FileManager{
         use std::f32::consts::E;
         use std::fs;
         use std::io::Write;
-        use std::path::Path;
+        use std::path::{Path, PathBuf};
         use std::process::Command;
-        use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher};
-        use std::sync::mpsc::channel;
+        use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher, Config};
         use std::thread;
         use std::time::Duration;
+        use std::sync::mpsc::{channel, Receiver};
 
         #[tauri::command]
         pub fn read_file(file_path: String) -> Result<String, String> {
@@ -120,70 +121,75 @@ pub mod FileManager{
         pub fn open_file(file_path: String, software: Option<String>) -> Result<(), String> {
             let path = Path::new(&file_path);
             println!("Opening file: {:?}", path);
-            
-            if let Some(software) = software {
-                let _ = match Command::new(software).arg(path).status() {
-                    Ok(status) if status.success() => Ok(()),
-                    Ok(status) => Err(format!("Software exited with status: {}", status)),
-                    Err(e) => Err(format!("Failed to open software: {}", e)),
-                };
-            } else {
-                let _ = match open::that(path) {
-                    Ok(_) => Ok(()),
-                    Err(e) => Err(format!("Failed to open the file: {}", e)),
-                };
-            }
-
-            // Start monitoring the file for changes
-            if let Err(e) = monitor_file(path.to_path_buf()) {
-                eprintln!("Failed to monitor the file: {}", e);
-            }else {
-                println!("Monitoring file for changes...");
-            }
-
-            Ok(())
-        }
-
-        fn monitor_file(file_path: std::path::PathBuf) -> NotifyResult<()> {
+        
+            // Set up file watcher
             let (tx, rx) = channel();
+            let mut watcher = RecommendedWatcher::new(tx, Config::default())
+                .map_err(|e| format!("Failed to create watcher: {}", e))?;
+            
+            // Watch the specified path
+            watcher.watch(path, RecursiveMode::NonRecursive)
+                .map_err(|e| format!("Failed to watch file: {}", e))?;
         
-            let mut watcher: RecommendedWatcher = notify::recommended_watcher(move |res| {
-                if let Err(err) = tx.send(res) {
-                    eprintln!("Failed to send event: {:?}", err);
-                }
-            })?;
-        
-            // Add a path to be watched.
-            watcher.watch(&file_path, RecursiveMode::NonRecursive)?;
-            println!("Started watching file: {:?}", file_path);
-        
-            thread::spawn(move || {
-                while let Ok(res) = rx.recv() {
-                    match res {
-                        Ok(event) => {
-                            println!("Received event: {:?}", event);
-                            handle_event(event);
-                        },
-                        Err(e) => eprintln!("watch error: {:?}", e),
-                    }
-                }
-                eprintln!("watch error: {:?}", "Failed to receive event")
+            // Keep the watcher in scope by wrapping it in an Arc
+            let watcher_handle = thread::spawn(move || {
+                handle_file_events(rx);
             });
         
+            // Open the file with the specified software
+            if let Some(software) = software {
+                match Command::new(software).arg(path).status() {
+                    Ok(status) if status.success() => {},
+                    Ok(status) => return Err(format!("Software exited with status: {}", status)),
+                    Err(e) => return Err(format!("Failed to open software: {}", e)),
+                }
+            } else {
+                match open::that(path) {
+                    Ok(_) => {},
+                    Err(e) => return Err(format!("Failed to open the file: {}", e)),
+                }
+            }
+        
+            // Join the watcher thread if necessary, or handle it gracefully
+            watcher_handle.join().map_err(|e| format!("Watcher thread error: {:?}", e))?;
+        
             Ok(())
         }
         
-        fn handle_event(event: Event) {
-            println!("File event: {:?}", event);
-            // for path in event.paths {
-            //     if event.kind == EventKind::Modify(_) {
-            //         println!("File {:?} was modified!", path);
-            //     } else if event.kind == EventKind::Create(_) {
-            //         println!("File {:?} was created!", path);
-            //     } else if event.kind == EventKind::Remove(_) {
-            //         println!("File {:?} was deleted!", path);
-            //     }
-            // }
+        fn handle_file_events(rx: Receiver<notify::Result<Event>>) {
+            loop {
+                match rx.recv() {
+                    Ok(Ok(Event { kind: EventKind::Modify(_), paths, .. })) => {
+                        for path in paths {
+                            println!("File updated: {:?}", path);
+                        }
+                    },
+                    Ok(Ok(event)) => println!("Other event: {:?}", event),
+                    Ok(Err(e)) => println!("Watch error: {:?}", e),
+                    Err(e) => {
+                        println!("Channel error: {:?}", e);
+                        break;  // Exit loop if channel is disconnected
+                    }
+                }
+            }
         }
+
+        // pub fn simple_watch_test() {
+        //     let path = Path::new("//Users/user/devwork/CODE_OF_CONDUCT.md");
+        //     let (tx, rx) = channel();
+        //     let mut watcher = RecommendedWatcher::new(tx, Config::default()).unwrap();
+        //     watcher.watch(path, RecursiveMode::NonRecursive).unwrap();
+        
+        //     loop {
+        //         match rx.recv() {
+        //             Ok(Ok(event)) => println!("Event: {:?}", event),
+        //             Ok(Err(e)) => eprintln!("Error: {:?}", e),
+        //             Err(e) => {
+        //                 eprintln!("Channel error: {:?}", e);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
