@@ -60,6 +60,7 @@ export function ResizeableHandle({ className }: ResizeableHandleProps) {
         const prev = handle.previousElementSibling as HTMLDivElement;
         const parent = handle.parentElement;
         if (!parent) return;
+        const handles = parent.querySelectorAll("[data-resizeable-handle]");
         let start = 0;
         let isDragging = false;
         let flexGrow = {
@@ -107,6 +108,17 @@ export function ResizeableHandle({ className }: ResizeableHandleProps) {
                     prev: 0,
                     next: 0,
                 };
+                const handlesWidth = Array.from(handles).reduce(
+                    (acc, handle) => acc + handle.clientWidth,
+                    0
+                );
+                const resultWidth = parentWidth - handlesWidth;
+                prev.style.flex = `${
+                    (prev.clientWidth / resultWidth) * 100
+                } 1 0`;
+                next.style.flex = `${
+                    (next.clientWidth / resultWidth) * 100
+                } 1 0`;
             }
         }
 
@@ -121,6 +133,7 @@ export function ResizeableHandle({ className }: ResizeableHandleProps) {
         <div
             ref={handleRef}
             className={`w-px p-1 cursor-col-resize ${className ?? ""}`}
+            data-resizeable-handle
         ></div>
     );
 }

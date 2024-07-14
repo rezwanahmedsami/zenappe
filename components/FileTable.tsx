@@ -16,12 +16,18 @@ export default function FileTable({ files, path, setPath }: FileTableProps) {
     }
 
     function open_file(filePath: string) {
-        const pathfilePath = path.length > 0 ? "/" + path.join("/") + "/" + filePath : "/" + filePath;
+        const pathfilePath =
+            path.length > 0
+                ? "/" + path.join("/") + "/" + filePath
+                : "/" + filePath;
         console.log(pathfilePath);
         import("@tauri-apps/api")
-            .then(async ({ invoke })  => {
+            .then(async ({ invoke }) => {
                 console.log("open_file", pathfilePath);
-                let res = await invoke("open_file", { filePath: pathfilePath, software: "code" });
+                let res = await invoke("open_file", {
+                    filePath: pathfilePath,
+                    software: "code",
+                });
                 console.log(res);
             })
             .catch((error) => {
@@ -73,7 +79,9 @@ export default function FileTable({ files, path, setPath }: FileTableProps) {
                             rights={file.rights}
                             owner={file.owner}
                             onDoubleClick={() =>
-                                file.type === "folder" ? handleFolderClick(file.name) : open_file(file.name)
+                                file.type === "folder"
+                                    ? handleFolderClick(file.name)
+                                    : open_file(file.name)
                             }
                         />
                     ))}
